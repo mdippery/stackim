@@ -1,0 +1,69 @@
+@import url('/css/reset.css');
+
+body {
+  font-family: Georgia, serif;
+  margin: 0 auto;
+  width: 540px;
+}
+
+a {
+  text-decoration: none;
+}
+
+#header {
+  margin-bottom: 2em;
+  margin-top: 1em;
+}
+
+#header h1 {
+  font-size: 64px;
+}
+
+#header h2 {
+  font-size: 18px;
+  text-transform: lowercase;
+}
+
+#content {
+  color: rgb(68,68,68);
+  font-size: 17px;
+  margin-bottom: 2em;
+}
+
+#content a {
+  color: rgb(0,75,107);
+}
+
+#content a:hover,
+#content a:active {
+  border-bottom: 2px solid rgb(0,75,107);
+}
+
+#content p {
+  margin-top: 0.75em;
+}
+
+#content p:first-child {
+  font-style: italic;
+  margin-bottom: 1.5em;
+}
+
+#content h3 {
+  font-size: 30px;
+  margin-top: 1em;
+}
+
+#content pre,
+#content .url-example {
+  background-color: #eee;
+  font-family: 'Consolas', 'Menlo', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+  font-size: 15px;
+  margin-top: 1em;
+  padding: 7px 30px;
+}
+
+#content .legalese {
+  font-size: 0.75em;
+  font-style: italic;
+  margin-top: 2em;
+}

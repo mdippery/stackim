@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+  <title>stack.im - Shorten your Stack Overflow profile URL</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="/css/stackim.css">
+</head>
+
+<body>
+  <div id="header">
+    <h1>stack.im</h1>
+    <h2>Shorten your Stack Overflow profile URL</h2>
+  </div>
+  <div id="content">
+    <p><span class="branding">stack.im</span> is a URL shortener for Stack Overflow profile pages.</p>
+    <p>Now you can turn this:</p>
+    <p class="url-example">stackoverflow.com/users/00000/me</p>
+    <p>into this:</p>
+    <p class="url-example">stack.im/me</p>
+    <p>Then post it everywhere!</p>
+    
+    <h3>How do I create a URL?</h3>
+    <p>We’re all programmers here, so just use <span class="cli-tool">curl</span>:</p>
+    <pre><code>$ curl -X PUT -d "stackid=00000" http://stack.im/me</code></pre>
+    <p>(That is, make a PUT request to the shortened URL you desire with your Stack Overflow user ID as a parameter.)</p>
+    
+    <h3>Where’s the source code?</h3>
+    <p>Ask, and ye shall <a href="https://github.com/mdippery/stackim">receive</a>.</p>
+    
+    <h3>Who made this?</h3>
+    <p><span class="branding">stack.im</span> is a product of <a href="http://monkey-robot.com/">Michael Dippery</a>.</p>
+    <p class="legalese">(Note: <span class="branding">stack.im</span> is not affiliated with Stack Overflow or its founders or creators in any way, shape, or form.)</p>
+  </div>
+</body>
+
+</html>
