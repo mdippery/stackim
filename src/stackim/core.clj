@@ -10,5 +10,9 @@
   (route/resources "/"))
 
 
+(def port
+  (Integer/parseInt (or (System/getenv "PORT") "5000")))
+
+
 (defn -main []
-  (run-server stackim {:port 5000}))
+  (run-server stackim {:port port}))
