@@ -9,4 +9,6 @@
   :main ^:skip-aot stackim.core
   :target-path "target/%s"
   :jar-name "stackim.jar"
-  :manifest {"Implementation-Version" ~project-version})
+  :uberjar-name "stackim-standalone.jar"
+  :manifest {"Implementation-Version" ~project-version}
+  :profiles {:uberjar {:aot :all}})

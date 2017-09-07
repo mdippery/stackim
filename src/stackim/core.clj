@@ -1,4 +1,5 @@
 (ns stackim.core
+  (:gen-class)
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [org.httpkit.server :refer [run-server]]
