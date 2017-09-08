@@ -13,7 +13,7 @@
   (jdbc/execute! db/db ["INSERT INTO hits (tag_id, hostname) VALUES ((SELECT id FROM tags WHERE name = ?), ?)" tag hostname]))
 
 (defn exists? [tag]
-  (-> tag stack-id nil?))
+  (-> tag stack-id nil? not))
 
 (defn valid? [tag]
   (not (nil? (re-matches #"[a-zA-Z0-9]+" tag))))
