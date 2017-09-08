@@ -1,7 +1,8 @@
 (ns stackim.db
   (:require [clojure.java.jdbc :as jdbc])
   (:import [java.io File]
-           [java.net URI]))
+           [java.net URI]
+           [java.sql BatchUpdateException]))
 
 
 (def cwd
@@ -37,7 +38,9 @@
                           [:hostname "varchar(512)" "NOT NULL"]]))
 
 (defn create-tables! []
-  (jdbc/db-do-commands db
-                       [tag-ddl
-                        hit-ddl
-                        "CREATE INDEX tag_idx ON tags (name)"]))
+  (try
+    (jdbc/db-do-commands db
+                         [tag-ddl
+                          hit-ddl
+                          "CREATE INDEX tag_idx ON tags (name)"])
+    (catch BatchUpdateException e)))

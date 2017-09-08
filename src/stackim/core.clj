@@ -2,8 +2,9 @@
   (:gen-class)
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [org.httpkit.server :refer [run-server]]
-            [selmer.parser :refer [render-file]]))
+            [org.httpkit.server :as http]
+            [selmer.parser :as selmer]
+            [stackim.db :as db]))
 
 
 (def port
@@ -11,8 +12,10 @@
 
 
 (defroutes stackim
-  (GET "/" [] (render-file "templates/home.html" {}))
+  (GET "/" [] (selmer/render-file "templates/home.html" {}))
   (route/resources "/"))
 
 (defn -main []
-  (run-server stackim {:port port}))
+  (db/create-tables!)
+  (println "Starting server on port" port)
+  (http/run-server stackim {:port port}))
