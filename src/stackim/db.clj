@@ -35,7 +35,7 @@
                          [[:id :integer :primary :key :autoincrement]
                           [:tag_id :integer "REFERENCES tags (id)"]
                           [:timestamp :timestamp "NOT NULL" "DEFAULT CURRENT_TIMESTAMP"]
-                          [:hostname "varchar(512)" "NOT NULL"]]))
+                          [:referer "varchar(1024)" "NOT NULL"]]))
 
 (defn create-tables! []
   (try

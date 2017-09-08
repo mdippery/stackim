@@ -9,8 +9,8 @@
 (defn stack-id [tag]
   (-> (jdbc/query db/db ["SELECT stack_id FROM tags WHERE name = ?" tag]) first :stack_id))
 
-(defn record-visit [tag hostname]
-  (jdbc/execute! db/db ["INSERT INTO hits (tag_id, hostname) VALUES ((SELECT id FROM tags WHERE name = ?), ?)" tag hostname]))
+(defn record-visit [tag referer]
+  (jdbc/execute! db/db ["INSERT INTO hits (tag_id, referer) VALUES ((SELECT id FROM tags WHERE name = ?), ?)" tag referer]))
 
 (defn exists? [tag]
   (-> tag stack-id nil? not))

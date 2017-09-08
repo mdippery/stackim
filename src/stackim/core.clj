@@ -21,7 +21,7 @@
 (defn get-tag [tag]
   (if (tags/exists? tag)
       (do
-        (tags/record-visit tag "")
+        (tags/record-visit tag "-")
         (-> tag tags/stack-id stack-url redirect))
       ({:status 404 :body (str "No tag for " tag)})))
 
