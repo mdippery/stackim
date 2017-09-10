@@ -3,6 +3,7 @@
 (defproject stackim project-version
   :description "URL shortener for Stack Overflow profiles"
   :url "http://stack.im/"
+  :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/java.jdbc "0.7.1"]
                  [compojure "1.6.0"]
