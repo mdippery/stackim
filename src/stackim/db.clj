@@ -18,10 +18,7 @@
   (URI. database-url))
 
 (def db
-  {:classname "org.sqlite.JDBC"
-   :subprotocol (.getScheme database-uri)
-   :subname (.getPath database-uri)
-   })
+  database-url)
 
 (def tag-ddl
   (jdbc/create-table-ddl :tags
