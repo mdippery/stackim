@@ -8,6 +8,7 @@
                  [org.clojure/java.jdbc "0.7.1"]
                  [compojure "1.6.0"]
                  [http-kit "2.2.0"]
+                 [org.postgresql/postgresql "9.4-1201-jdbc4"]
                  [org.xerial/sqlite-jdbc "3.20.0"]
                  [selmer "1.11.0"]]
   :main ^:skip-aot stackim.core
