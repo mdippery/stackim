@@ -35,9 +35,7 @@
                           [:referer "varchar(1024)" "NOT NULL"]]))
 
 (defn create-tables! []
-  (try
-    (jdbc/db-do-commands db
-                         [tag-ddl
-                          hit-ddl
-                          "CREATE INDEX tag_idx ON tags (name)"])
-    (catch BatchUpdateException e)))
+  (jdbc/db-do-commands db
+                        [tag-ddl
+                        hit-ddl
+                        "CREATE INDEX tag_idx ON tags (name)"]))
