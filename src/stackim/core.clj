@@ -56,7 +56,7 @@
 
     :else
       (do
-        (tags/insert tag id)
+        (tags/insert tag (Integer/parseInt id))
         (ok "OK"))))
 
 (defroutes stackim
