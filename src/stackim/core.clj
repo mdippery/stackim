@@ -57,6 +57,5 @@
   (route/resources "/"))
 
 (defn -main []
-  (db/create-tables!)
   (println "Starting server on port" port)
   (http/run-server (ring/wrap-params stackim) {:port port}))
