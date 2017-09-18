@@ -42,13 +42,22 @@
 
 (defn put-tag [tag id]
   (cond
-    (nil? id) (oops 400 "PUT request without 'stackid' parameter")
-    (not (tags/valid? tag)) (oops 403 "Shortened URL may only contain alphanumeric characters")
-    (tags/exists? tag) (oops 409 (str "Tag '" tag "' is already in use"))
-    (not (int? id)) (oops 403 (str "Invalid Stack Overflow ID: '" id "'"))
-    :else (do
-            (tags/insert tag id)
-            (ok "OK"))))
+    (nil? id)
+      (oops 400 "PUT request without 'stackid' parameter")
+
+    (not (tags/valid? tag))
+      (oops 403 "Shortened URL may only contain alphanumeric characters")
+
+    (tags/exists? tag)
+      (oops 409 (str "Tag '" tag "' is already in use"))
+
+    (not (int? id))
+      (oops 403 (str "Invalid Stack Overflow ID: '" id "'"))
+
+    :else
+      (do
+        (tags/insert tag id)
+        (ok "OK"))))
 
 (defroutes stackim
   (GET "/" [] (selmer/render-file "templates/home.html" {}))
