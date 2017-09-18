@@ -1,6 +1,6 @@
 CREATE TABLE tags (
     id         serial       PRIMARY KEY,
-    name       varchar(256) NOT NULL,
+    name       varchar(256) NOT NULL UNIQUE,
     stack_id   integer      NOT NULL,
     created_at timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
