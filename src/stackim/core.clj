@@ -27,10 +27,10 @@
   {:status 301 :headers {"Location" to} :body ""})
 
 (defn oops [code body]
-  {:status code :body body})
+  {:status code :body (str body "\n")})
 
 (defn ok [body]
-  {:status 200 :body body})
+  {:status 200 :body (str body "\n")})
 
 
 (defn get-tag [tag]
