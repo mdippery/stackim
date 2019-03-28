@@ -1,4 +1,7 @@
-FROM alpine:3.9
+# Build
+# -----------------------------------------------------------------------------
+
+FROM alpine:3.9 AS build
 
 RUN apk add --update bash curl openjdk8 nss
 
@@ -11,6 +14,16 @@ COPY . /app
 WORKDIR /app
 RUN lein uberjar
 
-EXPOSE 5000
 
-CMD ["java", "-jar", "target/uberjar/stackim-standalone.jar"]
+# Application
+# -----------------------------------------------------------------------------
+
+FROM alpine:3.9
+
+RUN apk add --update openjdk8 nss
+
+COPY --from=build /app/target/uberjar/stackim-standalone.jar /app/stackim-standalone.jar
+WORKDIR /app
+
+EXPOSE 5000
+CMD ["java", "-jar", "/app/stackim-standalone.jar"]
