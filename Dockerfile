@@ -20,7 +20,7 @@ RUN lein uberjar
 
 FROM alpine:3.9
 
-RUN apk add --update openjdk8 nss
+RUN apk add --update openjdk8-jre nss
 
 COPY --from=build /app/target/uberjar/stackim-standalone.jar /app/stackim-standalone.jar
 WORKDIR /app
