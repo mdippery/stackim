@@ -3,7 +3,7 @@
 
 FROM alpine:3.9 AS build
 
-RUN apk add --update bash curl openjdk8 nss
+RUN apk add --update bash curl openjdk8
 
 WORKDIR /usr/local/bin
 RUN curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
@@ -20,7 +20,7 @@ RUN lein uberjar
 
 FROM alpine:3.9
 
-RUN apk add --update openjdk8-jre nss
+RUN apk add --update openjdk8-jre
 
 COPY --from=build /app/target/uberjar/stackim-standalone.jar /app/stackim-standalone.jar
 WORKDIR /app
