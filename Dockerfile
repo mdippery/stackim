@@ -20,6 +20,8 @@ RUN lein uberjar
 
 FROM alpine:3.9
 
+ENV DATABASE_URL postgres://stackim:password@postgres:5432/stackim
+
 RUN apk add --update openjdk8-jre
 
 COPY --from=build /app/target/uberjar/stackim-standalone.jar /app/stackim-standalone.jar
