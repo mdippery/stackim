@@ -20,8 +20,7 @@ RUN lein uberjar
 
 FROM alpine:3.9
 
-ARG DATABASE_URL
-ENV DATABASE_URL ${DATABASE_URL:-postgres://localhost:5432}
+ENV DATABASE_URL postgres://localhost:5432
 
 RUN apk add --update openjdk8-jre
 
