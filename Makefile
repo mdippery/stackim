@@ -7,7 +7,7 @@ build:
 
 tag:
 	docker build -t ${IMAGE_NAME} -t ${IMAGE_NAME}:${IMAGE_VERSION} .
-	@docker image ls
+	$(MAKE) clean
 
 run:
 	docker run -d --name stackim -p 5000:5000 --env DATABASE_URL=${DATABASE_URL} ${IMAGE_NAME}
