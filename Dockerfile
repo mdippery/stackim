@@ -3,7 +3,7 @@
 
 FROM alpine:3.9 AS build
 
-RUN apk add --update bash curl openjdk8
+RUN apk add --update bash curl openjdk8-jre
 
 WORKDIR /usr/local/bin
 RUN curl -O https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
