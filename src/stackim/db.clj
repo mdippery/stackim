@@ -1,8 +1,7 @@
 (ns stackim.db
   (:require [clojure.java.jdbc :as jdbc])
   (:import [java.io File]
-           [java.net URI]
-           [java.sql BatchUpdateException]))
+           [java.net URI]))
 
 
 (def cwd
