@@ -3,6 +3,8 @@
 
 FROM alpine:3.9 AS build
 
+LABEL maintainer="Michael Dippery <michael@monkey-robot.com>"
+
 RUN apk add --update bash curl openjdk8-jre
 
 WORKDIR /usr/local/bin
