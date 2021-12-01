@@ -50,3 +50,6 @@
       (do
         (tags/insert tag (Integer/parseInt id))
         (ok "OK"))))
+
+(defn homepage []
+  (selmer/render-file "templates/home.html" {}))
