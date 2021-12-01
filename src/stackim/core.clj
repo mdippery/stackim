@@ -1,6 +1,8 @@
 (ns stackim.core
-  (:gen-class)
-  (:require [selmer.parser :as selmer]
+  (:gen-class
+    :methods [^:static [handleHomepage [String] String]])
+  (:require [clojure.data.json :as json]
+            [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.tags :as tags]))
 
@@ -53,3 +55,17 @@
 
 (defn homepage []
   (selmer/render-file "templates/home.html" {}))
+
+(defn json-response [status headers body]
+  (json/write-str
+    {:statusCode status
+     :headers (json/write-str headers)
+     :body body
+     :isBase64Encoded false}))
+
+
+; Documentation for response formats for HTTP APIs can be found at
+; <https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html>
+
+(defn -handleHomepage [s]
+  (json-response 200 {:Content-Type "text/html"} (homepage)))
