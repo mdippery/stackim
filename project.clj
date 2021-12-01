@@ -7,7 +7,6 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.amazonaws/aws-lambda-java-core "1.2.1"]
                  [selmer "1.11.0"]]
-  :main ^:skip-aot stackim.core
   :target-path "target/%s"
   :jar-name "stackim-%s.jar"
   :uberjar-name "stackim-standalone-%s.jar"
