@@ -1,17 +1,9 @@
 (ns stackim.core
   (:gen-class)
-  (:require [clojure.string :as str]
-            [compojure.core :refer :all]
-            [compojure.route :as route]
-            [org.httpkit.server :as http]
-            [ring.middleware.params :as ring]
-            [selmer.parser :as selmer]
+  (:require [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.tags :as tags]))
 
-
-(def port
-  (Integer/parseInt (or (System/getenv "PORT") "5000")))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
@@ -58,13 +50,3 @@
       (do
         (tags/insert tag (Integer/parseInt id))
         (ok "OK"))))
-
-(defroutes stackim
-  (GET "/" [] (selmer/render-file "templates/home.html" {}))
-  (GET "/:tag" [tag] (get-tag tag))
-  (PUT "/:tag" req (put-tag (:tag (:params req)) (get (:params req) "stackid")))
-  (route/resources "/"))
-
-(defn -main []
-  (println "Starting server on port" port)
-  (http/run-server (ring/wrap-params stackim) {:port port}))
