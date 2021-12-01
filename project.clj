@@ -5,6 +5,7 @@
   :url "http://stack.im/"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
+                 [com.amazonaws/aws-lambda-java-core "1.2.1"]
                  [selmer "1.11.0"]]
   :main ^:skip-aot stackim.core
   :target-path "target/%s"
