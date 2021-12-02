@@ -1,6 +1,6 @@
 (ns stackim.core
   (:gen-class
-    :methods [^:static [handleHomepage [String] String]])
+    :methods [^:static [handleHomepage [Object] String]])
   (:require [clojure.data.json :as json]
             [selmer.parser :as selmer]
             [stackim.db :as db]
@@ -67,5 +67,5 @@
 ; Documentation for response formats for HTTP APIs can be found at
 ; <https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html>
 
-(defn -handleHomepage [s]
+(defn -handleHomepage [o]
   (json-response 200 {:Content-Type "text/html"} (homepage)))
