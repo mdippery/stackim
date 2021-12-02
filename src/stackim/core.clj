@@ -55,10 +55,10 @@
 (defn homepage []
   (selmer/render-file "templates/home.html" {}))
 
-(defn json-response [status headers body]
+(defn json-response [status mimetype body]
   (java.util.HashMap.
     {"statusCode" status
-     "headers" headers
+     "headers" {"Content-Type" mimetype}
      "body" body
      "isBase64Encoded" false}))
 
@@ -67,4 +67,4 @@
 ; <https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html>
 
 (defn -handleHomepage [o]
-  (json-response 200 {"Content-Type" "text/html"} (homepage)))
+  (json-response 200 "text/html" (homepage)))
