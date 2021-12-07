@@ -1,6 +1,7 @@
 (ns stackim.tags
   (:require [taoensso.faraday :as far]
-            [stackim.db :as db]))
+            [stackim.db :as db])
+  (:import [java.time Instant]))
 
 
 (defn stack-id [tag]
@@ -16,7 +17,15 @@
   ; (jdbc/execute! db/db ["INSERT INTO hits (tag_id, referer) VALUES ((SELECT id FROM tags WHERE name = ?), ?)" tag referer]))
   nil)
 
+(defn- now []
+  (.toString (Instant/now)))
+
 (defn insert [tag id]
   (if (exists? tag)
     false
-    (nil? (far/put-item db/db-options db/table {:Alias tag :ProfileID id}))))
+    (nil? (far/put-item
+            db/db-options
+            db/table
+            {:Alias tag
+             :ProfileID id
+             :CreatedAt (now)}))))
