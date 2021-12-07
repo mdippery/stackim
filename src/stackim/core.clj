@@ -1,9 +1,12 @@
 (ns stackim.core
   (:gen-class
-    :methods [^:static [handleHomepage [Object] java.util.Map]])
-  (:require [selmer.parser :as selmer]
+    :methods [^:static [handleHomepage [java.util.Map] java.util.Map]
+              ^:static [handleCss [java.util.Map] java.util.Map]])
+  (:require [clojure.java.io :as io]
+            [selmer.parser :as selmer]
             [stackim.db :as db]
-            [stackim.tags :as tags]))
+            [stackim.tags :as tags])
+  (:import (java.io FileNotFoundException)))
 
 
 (defn stack-url [id]
@@ -55,6 +58,14 @@
 (defn homepage []
   (selmer/render-file "templates/home.html" {}))
 
+(defn load-resource [path]
+  (try
+    (slurp (io/resource path))
+    (catch IllegalArgumentException ex
+      nil)
+    (catch FileNotFoundException ex
+      nil)))
+
 (defn json-response [status mimetype body]
   (java.util.HashMap.
     {"statusCode" status
@@ -68,3 +79,9 @@
 
 (defn -handleHomepage [o]
   (json-response 200 "text/html" (homepage)))
+
+(defn -handleCss [o]
+  (let [css (load-resource (str "public" (get (get (get o "requestContext") "http") "path")))]
+    (case css
+      nil (json-response 404 "text/plain" "Not found")
+    (json-response 200 "text/css" css))))
