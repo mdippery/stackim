@@ -81,7 +81,7 @@
   (json-response 200 "text/html" (homepage)))
 
 (defn -handleCss [o]
-  (let [css (load-resource (str "public" (get (get (get o "requestContext") "http") "path")))]
+  (let [css (load-resource (str "public" (get-in o ["requestContext" "http" "path"])))]
     (case css
       nil (json-response 404 "text/plain" "Not found")
     (json-response 200 "text/css" css))))
