@@ -1,14 +1,13 @@
 (ns stackim.tags
-  (:require [stackim.db :as db]))
+  (:require [taoensso.faraday :as far]
+            [stackim.db :as db]))
 
 
 (defn insert [tag id]
-  ; (jdbc/insert! db/db :tags {:name tag :stack_id id}))
-  nil)
+  (far/put-item db/db-options db/table {:Alias tag :ProfileID id}))
 
 (defn stack-id [tag]
-  ; (-> (jdbc/query db/db ["SELECT stack_id FROM tags WHERE name = ?" tag]) first :stack_id))
-  nil)
+  (:ProfileID (far/get-item db/db-options db/table {:Alias tag})))
 
 (defn record-visit [tag referer]
   ; (jdbc/execute! db/db ["INSERT INTO hits (tag_id, referer) VALUES ((SELECT id FROM tags WHERE name = ?), ?)" tag referer]))

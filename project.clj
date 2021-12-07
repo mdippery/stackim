@@ -6,6 +6,7 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.amazonaws/aws-lambda-java-core "1.2.1"]
+                 [com.taoensso/faraday "1.11.2"]
                  [selmer "1.11.0"]]
   :target-path "target/%s"
   :jar-name "stackim-%s.jar"
