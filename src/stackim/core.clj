@@ -31,30 +31,32 @@
   {:status 200 :body (str body "\n")})
 
 
-(defn get-tag [tag referer]
-  (if (tags/exists? tag)
-      (do
-        (tags/record-visit tag referer)
-        (-> tag tags/stack-id stack-url redirect))
-      ({:status 404 :body (str "No tag for " tag)})))
+(defn get-tag [alias referer]
+  (let [tag (tags/load-tag alias)]
+    (if (tags/exists? tag)
+        (do
+          (tags/record-visit tag referer)
+          (tags/save-tag tag)
+          (-> tag tags/stack-id stack-url redirect))
+        ({:status 404 :body (str "No tag for " tag)})))
 
-(defn put-tag [tag id]
+(defn put-tag [alias id]
   (cond
     (nil? id)
       (oops 400 "PUT request without 'stackid' parameter")
 
-    (not (tags/valid? tag))
+    (not (tags/valid? alias))
       (oops 403 "Shortened URL may only contain alphanumeric characters")
 
-    (tags/exists? tag)
-      (oops 409 (str "Tag '" tag "' is already in use"))
+    (tags/exists? alias)
+      (oops 409 (str "Tag '" alias "' is already in use"))
 
     (not (int? id))
       (oops 403 (str "Invalid Stack Overflow ID: '" id "'"))
 
     :else
       (do
-        (tags/insert tag (Integer/parseInt id))
+        (tags/save-tag (tags/tag alias (Integer/parseInt id)))
         (ok "OK"))))
 
 (defn homepage []

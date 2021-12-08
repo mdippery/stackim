@@ -4,36 +4,48 @@
   (:import [java.time Instant]))
 
 
-(defn- now []
-  (.toString (Instant/now)))
+(defrecord Visit [timestamp referer])
 
-(defn- record [tag]
-  (far/get-item db/db-options db/table {:Alias tag}))
+(defrecord Tag [alias profile-id created-at visits])
 
-(defn stack-id [tag]
-  (:ProfileID (record tag)))
+(defn visit [referer]
+  (Visit. (Instant/now) referer))
 
-(defn exists? [tag]
-  (-> tag stack-id nil? not))
+(defn tag [alias profile-id]
+  ; TODO: Convert profile-id to Integer
+  (Tag. alias profile-id (Instant/now) []))
 
-(defn valid? [tag]
-  (not (nil? (re-matches #"[a-zA-Z0-9]+" tag))))
+(defn tag->dynamodb [tag]
+  {:Alias (:alias tag)
+   :ProfileID (:profile-id tag)
+   :CreatedAt (-> tag :CreatedAt .toString)})
 
-(defn record-visit [tag referer]
-  (let [rec (record tag)
-        hits (get rec :Hits [])
-        hit {:Timestamp (now) :Referer referer}]
-    (assoc rec :Hits (conj hits hit))))
+(defn dynamodb->tag [doc]
+  (Tag. (:Alias doc) (:ProfileID doc) (Instant/parse (:CreatedAt doc)) (get doc :Hits [])))
 
-(defn insert-visit [tag referer]
-  (far/put-item db/db-options db/table (record-visit tag referer)))
+(defn record-visit [tag visit]
+  (assoc tag :visits (conj (:visits tag) visit)))
 
-(defn insert [tag id]
-  (if (exists? tag)
-    false
-    (nil? (far/put-item
-            db/db-options
-            db/table
-            {:Alias tag
-             :ProfileID id
-             :CreatedAt (now)}))))
+(defn load-tag [alias]
+  (let [doc (far/get-item db/db-options db/table {:Alias alias})]
+    (if (nil? doc) nil (dynamodb->tag doc))))
+
+(defn save-tag [tag]
+  (far/put-item db/db-options db/table (tag->dynamodb tag)))
+
+(defmulti exists? type)
+
+(defmethod exists? String [alias]
+  (-> alias load-tag nil? not))
+
+(defmethod exists? Tag [tag]
+  (-> tag nil? not))
+
+(defmethod exists? nil [_nil]
+  false)
+
+(defn stack-id [alias]
+  (:profile-id (load-tag alias)))
+
+(defn valid? [alias]
+  (not (nil? (re-matches #"[a-zA-Z0-9]+" alias))))
