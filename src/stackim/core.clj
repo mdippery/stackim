@@ -1,8 +1,10 @@
 (ns stackim.core
   (:gen-class
     :methods [^:static [handleHomepage [java.util.Map] java.util.Map]
-              ^:static [handleCss [java.util.Map] java.util.Map]])
+              ^:static [handleCss [java.util.Map] java.util.Map]
+              ^:static [handleGetTag [java.util.Map] java.util.Map]])
   (:require [clojure.java.io :as io]
+            [clojure.string :as str]
             [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.tags :as tags])
@@ -29,10 +31,10 @@
   {:status 200 :body (str body "\n")})
 
 
-(defn get-tag [tag]
+(defn get-tag [tag referer]
   (if (tags/exists? tag)
       (do
-        (tags/record-visit tag "-")
+        (tags/record-visit tag referer)
         (-> tag tags/stack-id stack-url redirect))
       ({:status 404 :body (str "No tag for " tag)})))
 
@@ -73,6 +75,12 @@
      "body" body
      "isBase64Encoded" false}))
 
+(defn- path [o]
+  (get-in o ["requestContext" "http" "path"]))
+
+(defn- trim-slash [s]
+  (str/replace s #"(^/+)|(/+$)" ""))
+
 
 ; Documentation for response formats for HTTP APIs can be found at
 ; <https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html>
@@ -81,7 +89,13 @@
   (json-response 200 "text/html" (homepage)))
 
 (defn -handleCss [o]
-  (let [css (load-resource (str "public" (get-in o ["requestContext" "http" "path"])))]
+  (let [css (load-resource (str "public" (path o)))]
     (case css
       nil (json-response 404 "text/plain" "Not found")
     (json-response 200 "text/css" css))))
+
+(defn -handleGetTag [o]
+  (let [tag (trim-slash (path o))
+        referer (get-in o ["headers" "Referer"])
+        res (get-tag tag referer)]
+    (json-response (:status res) "text/plain" (:body res))))
