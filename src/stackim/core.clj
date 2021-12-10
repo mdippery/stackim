@@ -16,7 +16,7 @@
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
 
-(defn int? [n]
+(defn valid-int? [n]
   (try
     (do
       (Integer/parseInt n)
@@ -51,7 +51,7 @@
     (tags/exists? tag)
       (oops 409 (str "Tag '" tag "' is already in use"))
 
-    (not (int? id))
+    (not (valid-int? id))
       (oops 403 (str "Invalid Stack Overflow ID: '" id "'"))
 
     :else
