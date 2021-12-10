@@ -18,9 +18,8 @@
 
 (defn valid-int? [n]
   (try
-    (do
-      (Integer/parseInt n)
-      true)
+    (let [i (Integer/parseInt n)]
+      (>= i 0))
     (catch NumberFormatException e false)))
 
 (defn redirect [to]
