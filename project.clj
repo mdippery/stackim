@@ -4,13 +4,13 @@
   :description "URL shortener for Stack Overflow profiles"
   :url "http://stack.im/"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/java.jdbc "0.7.1"]
-                 [compojure "1.6.0"]
-                 [http-kit "2.2.0"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc4"]
-                 [org.xerial/sqlite-jdbc "3.20.0"]
-                 [selmer "1.11.0"]]
+  :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.clojure/java.jdbc "0.7.12"]
+                 [compojure "1.6.2"]
+                 [http-kit "2.5.3"]
+                 [org.postgresql/postgresql "42.3.1"]
+                 [org.xerial/sqlite-jdbc "3.36.0.3"]
+                 [selmer "1.12.45"]]
   :main ^:skip-aot stackim.core
   :target-path "target/%s"
   :jar-name "stackim.jar"
