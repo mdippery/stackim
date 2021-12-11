@@ -37,7 +37,7 @@
       (do
         (tags/record-visit tag "-")
         (-> tag tags/stack-id stack-url redirect))
-      ({:status 404 :body (str "No tag for " tag)})))
+      {:status 404 :body (str "No tag for " tag "\n")}))
 
 (defn put-tag [tag id]
   (cond
