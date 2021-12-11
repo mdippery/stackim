@@ -16,4 +16,5 @@
   :jar-name "stackim.jar"
   :uberjar-name "stackim-standalone.jar"
   :manifest {"Implementation-Version" ~project-version}
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:dev {:dependencies [[ring/ring-mock "0.4.0"]]}
+             :uberjar {:aot :all}})
