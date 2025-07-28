@@ -1,5 +1,5 @@
-run: build
-  docker run --rm -p 8080:8080 stack.im
+run:
+  docker compose up
 
 build:
   docker build -t stack.im .

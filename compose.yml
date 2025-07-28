@@ -1,0 +1,25 @@
+volumes:
+  postgres:
+
+services:
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      DATABASE_URL: postgres://stackim:stackim@db/stackim
+      PORT: 8080
+    depends_on:
+      - db
+
+  db:
+    build: docker/db
+    environment:
+      POSTGRES_USER: stackim
+      POSTGRES_PASSWORD: stackim
+      POSTGRES_DB: stackim
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: on-failure:3
