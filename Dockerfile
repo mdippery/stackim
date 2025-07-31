@@ -1,5 +1,5 @@
 #############################################################################
-# INSTALLER
+# BUILDER
 
 FROM alpine:3.22 AS builder
 
@@ -8,8 +8,6 @@ RUN apk update && apk add leiningen
 COPY . /build
 WORKDIR /build
 RUN lein uberjar
-
-ENTRYPOINT ["/bin/bash"]
 
 
 #############################################################################
