@@ -15,7 +15,7 @@ RUN lein uberjar
 
 FROM alpine:3.22 AS runner
 
-RUN apk update && apk add java-jdk
+RUN apk update && apk add openjdk21-jre-headless
 
 WORKDIR /app
 COPY --from=builder /build/target/uberjar/stackim-standalone.jar .
