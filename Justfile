@@ -9,8 +9,14 @@ run: build
 sh: build
   docker run {{docker_opts}} -it --entrypoint=/bin/sh {{docker_image}}
 
+test: build-test
+  docker run {{docker_image}}-test
+
 run-compose:
   docker compose up
 
 build:
   docker build -t {{docker_image}} .
+
+build-test:
+  docker build -f docker/test/Dockerfile -t {{docker_image}}-test .
