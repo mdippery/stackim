@@ -3,6 +3,11 @@ set dotenv-load := true
 docker_image := 'stack.im'
 docker_opts  := '--rm -e DATABASE_URL -p 8080:8080'
 
+# List all available tasks
+[private]
+default:
+  @just -l
+
 # Run the web application
 run: build
   docker run {{docker_opts}} {{docker_image}}
