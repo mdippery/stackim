@@ -21,9 +21,10 @@ WORKDIR /app
 COPY --from=builder /build/target/uberjar/stackim-standalone.jar .
 
 ENV PORT=8080 \
-    DATABASE_URL="postgres://stackim:stackim@localhost/stackim"
+    DATABASE_URL="postgres://stackim:stackim@localhost/stackim" \
+    JAVA_OPTS='-XX:UseSVE=0'
 
 EXPOSE 8080
 
 ENTRYPOINT ["java"]
-CMD ["-XX:UseSVE=0", "-jar", "stackim-standalone.jar"]
+CMD ["-jar", "stackim-standalone.jar"]
