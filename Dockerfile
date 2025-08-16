@@ -24,7 +24,7 @@ ENV PORT=8080 \
     DATABASE_URL="postgres://stackim:stackim@localhost/stackim" \
     JAVA_OPTS='-XX:UseSVE=0'
 
-EXPOSE 8080
+EXPOSE ${PORT}
 
 ENTRYPOINT ["java"]
 CMD ["-jar", "stackim-standalone.jar"]
