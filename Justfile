@@ -24,6 +24,10 @@ test: build-test
 run-compose:
   docker compose up
 
+# Connect to the local Postgres database
+psql:
+  psql "postgres://stackim:stackim@localhost:${POSTGRES_PORT:-5432}/stackim"
+
 # Build the web application's Docker image
 build:
   docker build -t {{docker_image}} .
