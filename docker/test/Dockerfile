@@ -5,4 +5,7 @@ RUN apk update && apk add leiningen
 COPY . /build
 WORKDIR /build
 
+ENV LEIN_JVM_OPTS='-XX:UseSVE=0'
+ENV JAVA_OPTS=$LEIN_JVM_OPTS
+
 ENTRYPOINT ["lein", "test"]
