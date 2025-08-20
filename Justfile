@@ -22,7 +22,7 @@ test: build-test
 
 # Run the web application and supporting infrastructure
 run-compose:
-  docker compose up
+  docker compose up --build
 
 # Connect to the local Postgres database
 psql:
