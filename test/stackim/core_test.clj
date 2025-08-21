@@ -12,8 +12,34 @@
 
 (defn- jdbc-execute! [opts query] true)
 
-(deftest test-port
-  (is (= core/port 5000)))
+(deftest test-port-with-envvar
+  (binding [core/*env* {"PORT" "8080"}]
+    (is (= (core/port) 8080))))
+
+(deftest test-port-wo-envvar
+  (is (= (core/port) 5000)))
+
+(deftest test-canonical-port-with-envvar
+  (binding [core/*env* {"CANONICAL_PORT" "8080"}]
+    (is (= (core/canonical-port) 8080))))
+
+(deftest test-canonical-port-wo-envvar
+  (is (= (core/canonical-port) 443)))
+
+(deftest test-canonical-host-with-envvar
+  (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+    (is (= (core/canonical-host) "stack.im:443"))))
+
+(deftest test-canonical-host-wo-envvar
+  (binding [core/*env* {"CANONICAL_PORT" "5000"}]
+    (is (= (core/canonical-host) "localhost:5000"))))
+
+(deftest test-canonical-proto-with-localhost
+  (is (= (core/canonical-proto) "http")))
+
+(deftest test-canonical-proto-with-other-host
+  (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+    (is (= (core/canonical-proto) "https"))))
 
 (deftest test-stack-url
   (is (= (core/stack-url 28804) "http://stackoverflow.com/users/28804")))

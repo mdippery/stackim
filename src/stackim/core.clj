@@ -9,9 +9,21 @@
             [stackim.db :as db]
             [stackim.tags :as tags]))
 
+(def ^:dynamic *env* (System/getenv))
 
-(def port
-  (Integer/parseInt (or (System/getenv "PORT") "5000")))
+(defn getenv [k default] (or (get *env* k) default))
+
+(defn port []
+  (Integer/parseInt (getenv "PORT" "5000")))
+
+(defn canonical-port []
+  (Integer/parseInt (getenv "CANONICAL_PORT" "443")))
+
+(defn canonical-host []
+  (str (getenv "CANONICAL_HOST" "localhost") ":" (canonical-port)))
+
+(defn canonical-proto []
+  (if (str/starts-with? (canonical-host) "localhost") "http" "https"))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
@@ -65,5 +77,5 @@
   (route/resources "/"))
 
 (defn -main []
-  (println "Starting server on port" port)
-  (http/run-server (ring/wrap-params stackim) {:port port}))
+  (println "Starting server on port" (port))
+  (http/run-server (ring/wrap-params stackim) {:port (port)}))
