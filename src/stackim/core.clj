@@ -13,6 +13,9 @@
 
 (defn getenv [k default] (or (get *env* k) default))
 
+(defn header [request name]
+  (get-in request [:headers (str/lower-case name)]))
+
 (defn port []
   (Integer/parseInt (getenv "PORT" "5000")))
 
@@ -22,8 +25,8 @@
 (defn canonical-host []
   (str (getenv "CANONICAL_HOST" "localhost") ":" (canonical-port)))
 
-(defn canonical-proto []
-  (if (str/starts-with? (canonical-host) "localhost") "http" "https"))
+(defn canonical-proto [request]
+  (or (header request "X-Forwarded-Proto") "http"))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))

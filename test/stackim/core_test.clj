@@ -1,7 +1,7 @@
 (ns stackim.core-test
   (:require [clojure.test :refer :all]
             [clojure.java.jdbc :as jdbc]
-            [ring.mock.request :as ring]
+            [ring.mock.request :as mock]
             [stackim.core :as core]))
 
 
@@ -34,12 +34,16 @@
   (binding [core/*env* {"CANONICAL_PORT" "5000"}]
     (is (= (core/canonical-host) "localhost:5000"))))
 
-(deftest test-canonical-proto-with-localhost
-  (is (= (core/canonical-proto) "http")))
+(deftest test-canonical-proto-with-header
+  (let [request (-> (mock/request :get "/")
+                    (mock/header "X-Forwarded-Proto" "https")
+                    (mock/header "Content-Type" "html"))]
+    (is (= (core/canonical-proto request) "https"))))
 
-(deftest test-canonical-proto-with-other-host
-  (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
-    (is (= (core/canonical-proto) "https"))))
+(deftest test-canonical-proto-wo-header
+  (let [request (-> (mock/request :get "/")
+                    (mock/header "Content-Type" "html"))]
+    (is (= (core/canonical-proto request) "http"))))
 
 (deftest test-stack-url
   (is (= (core/stack-url 28804) "http://stackoverflow.com/users/28804")))
@@ -112,7 +116,7 @@
         (is (= (:body res) "OK\n"))))))
 
 (deftest test-get-homepage
-  (let [resp (core/stackim (ring/request :get "/"))]
+  (let [resp (core/stackim (mock/request :get "/"))]
     (is (= (:status resp) 200))))
 
 (deftest test-get-tag
@@ -120,12 +124,12 @@
                 jdbc/insert! jdbc-insert!
                 jdbc/execute! jdbc-execute!]
     (testing "tag exists"
-      (let [resp (core/stackim (ring/request :get "/mpd"))]
+      (let [resp (core/stackim (mock/request :get "/mpd"))]
         (is (= (:status resp) 301))
         (is (= (get (:headers resp) "Location") "http://stackoverflow.com/users/28804"))
         (is (= (:body resp) ""))))
     (testing "tag does not exist"
-      (let [resp (core/stackim (ring/request :get "/foo"))]
+      (let [resp (core/stackim (mock/request :get "/foo"))]
         (is (= (:status resp) 404))
         (is (nil? (get (:headers resp) "Location")))
         (is (= (:body resp) "No tag for foo\n"))))))
