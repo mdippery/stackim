@@ -5,6 +5,7 @@
             [compojure.route :as route]
             [org.httpkit.server :as http]
             [ring.middleware.params :as ring]
+            [ring.util.request :as request]
             [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.tags :as tags]))
@@ -27,6 +28,12 @@
 
 (defn canonical-proto [request]
   (or (header request "X-Forwarded-Proto") "http"))
+
+(defn canonical-redirect-url [request]
+  (let [path (request/path-info request)
+        proto (canonical-proto request)
+        host-port (canonical-host)]
+    (str proto "://" host-port path)))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))

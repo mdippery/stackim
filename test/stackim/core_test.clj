@@ -45,13 +45,59 @@
     (testing "with header set"
       (let [request (-> (mock/request :get "/")
                         (mock/header "X-Forwarded-Proto" "https")
-                        (mock/header "Content-Type" "html"))]
+                        (mock/header "Content-Type" "text/html"))]
         (is (= (core/canonical-proto request) "https"))))
 
     (testing "without header set"
       (let [request (-> (mock/request :get "/")
-                        (mock/header "Content-Type" "html"))]
+                        (mock/header "Content-Type" "text/html"))]
         (is (= (core/canonical-proto request) "http"))))))
+
+(deftest canonical-redirect-url
+  (testing "canonical redirect url"
+
+    (testing "with CANONICAL_HOST set"
+      (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+        (let [request (-> (mock/request :get "/tag")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-redirect-url request) "http://stack.im:443/tag")))))
+
+    (testing "with CANONICAL_PORT set"
+      (binding [core/*env* {"CANONICAL_HOST" "stack.im" "CANONICAL_PORT" "5000"}]
+        (let [request (-> (mock/request :get "/tag")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-redirect-url request) "http://stack.im:5000/tag")))))
+
+    (testing "with X-Forwarded-Proto set"
+
+      (testing "to https"
+        (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+          (let [request (-> (mock/request :get "/tag")
+                            (mock/header "X-Forwarded-Proto" "https")
+                            (mock/header "Content-Type" "text/html"))]
+            ; TODO: Omit port if port is default
+            (is (= (core/canonical-redirect-url request) "https://stack.im:443/tag")))))
+
+      (testing "to http"
+        (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+          (let [request (-> (mock/request :get "/tag")
+                            (mock/header "X-Forwarded-Proto" "http")
+                            (mock/header "Content-Type" "text/html"))]
+            ; TODO: Should really be :80 here
+            (is (= (core/canonical-redirect-url request) "http://stack.im:443/tag"))))))
+
+    (testing "with everything set"
+      (binding [core/*env* {"CANONICAL_HOST" "stack.im" "CANONICAL_PORT" "5000"}]
+        (let [request (-> (mock/request :get "/tag")
+                          (mock/header "X-Forwarded-Proto" "https")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-redirect-url request) "https://stack.im:5000/tag")))))
+
+    (testing "with nothing set"
+      (let [request (-> (mock/request :get "/tag")
+                        (mock/header "Content-Type" "text/html"))]
+        ; TODO: Should really be :80 here
+        (is (= (core/canonical-redirect-url request) "http://localhost:443/tag"))))))
 
 (deftest stack-url
   (testing "stack-url"
