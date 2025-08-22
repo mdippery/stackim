@@ -25,20 +25,49 @@
   (testing "canonical port configuration"
     (testing "with environment variable"
       (binding [core/*env* {"CANONICAL_PORT" "8080"}]
-        (is (= (core/canonical-port) 8080))))
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-port request) 8080)))))
 
     (testing "without environment variable"
-      (is (= (core/canonical-port) 443)))))
+      (testing "as http"
+        (testing "without header"
+          (let [request (-> (mock/request :get "/")
+                            (mock/header "Content-Type" "text/html"))]
+            (is (= (core/canonical-port request) 80))))
+
+        (testing "with header"
+          (let [request (-> (mock/request :get "/")
+                            (mock/header "X-Forwarded-Proto" "http")
+                            (mock/header "Content-Type" "text/html"))]
+            (is (= (core/canonical-port request) 80)))))
+
+      (testing "as https"
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "X-Forwarded-Proto" "https")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-port request) 443)))))))
 
 (deftest canonical-host
   (testing "canonical host configuration"
     (testing "without environment variable"
       (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
-        (is (= (core/canonical-host) "stack.im:443"))))
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-host request) "stack.im:80"))))
+
+      (testing "with header"
+        (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
+          (let [request (-> (mock/request :get "/")
+                            (mock/header "X-Forwarded-Proto" "https")
+                            (mock/header "Content-Type" "text/html"))]
+            (is (= (core/canonical-host request) "stack.im:443"))))))
 
     (testing "with environment variable"
       (binding [core/*env* {"CANONICAL_PORT" "5000"}]
-        (is (= (core/canonical-host) "localhost:5000"))))))
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Content-Type" "text/html"))]
+          (is (= (core/canonical-host request) "localhost:5000")))))))
 
 (deftest canonical-protocol
   (testing "canonical protocol"
@@ -60,7 +89,8 @@
       (binding [core/*env* {"CANONICAL_HOST" "stack.im"}]
         (let [request (-> (mock/request :get "/tag")
                           (mock/header "Content-Type" "text/html"))]
-          (is (= (core/canonical-redirect-url request) "http://stack.im:443/tag")))))
+          ; TODO Omit if port is default
+          (is (= (core/canonical-redirect-url request) "http://stack.im:80/tag")))))
 
     (testing "with CANONICAL_PORT set"
       (binding [core/*env* {"CANONICAL_HOST" "stack.im" "CANONICAL_PORT" "5000"}]
@@ -83,8 +113,8 @@
           (let [request (-> (mock/request :get "/tag")
                             (mock/header "X-Forwarded-Proto" "http")
                             (mock/header "Content-Type" "text/html"))]
-            ; TODO: Should really be :80 here
-            (is (= (core/canonical-redirect-url request) "http://stack.im:443/tag"))))))
+            ; TODO: Omit port if port is default
+            (is (= (core/canonical-redirect-url request) "http://stack.im:80/tag"))))))
 
     (testing "with everything set"
       (binding [core/*env* {"CANONICAL_HOST" "stack.im" "CANONICAL_PORT" "5000"}]
@@ -96,8 +126,8 @@
     (testing "with nothing set"
       (let [request (-> (mock/request :get "/tag")
                         (mock/header "Content-Type" "text/html"))]
-        ; TODO: Should really be :80 here
-        (is (= (core/canonical-redirect-url request) "http://localhost:443/tag"))))))
+        ; TODO: Omit port if port is default
+        (is (= (core/canonical-redirect-url request) "http://localhost:80/tag"))))))
 
 (deftest stack-url
   (testing "stack-url"

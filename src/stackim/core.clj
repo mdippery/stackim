@@ -20,19 +20,20 @@
 (defn port []
   (Integer/parseInt (getenv "PORT" "5000")))
 
-(defn canonical-port []
-  (Integer/parseInt (getenv "CANONICAL_PORT" "443")))
-
-(defn canonical-host []
-  (str (getenv "CANONICAL_HOST" "localhost") ":" (canonical-port)))
-
 (defn canonical-proto [request]
   (or (header request "X-Forwarded-Proto") "http"))
+
+(defn canonical-port [request]
+  (let [default-port (if (= (canonical-proto request) "https") "443" "80")]
+    (Integer/parseInt (getenv "CANONICAL_PORT" default-port))))
+
+(defn canonical-host [request]
+  (str (getenv "CANONICAL_HOST" "localhost") ":" (canonical-port request)))
 
 (defn canonical-redirect-url [request]
   (let [path (request/path-info request)
         proto (canonical-proto request)
-        host-port (canonical-host)]
+        host-port (canonical-host request)]
     (str proto "://" host-port path)))
 
 (defn stack-url [id]
