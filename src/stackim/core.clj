@@ -23,18 +23,25 @@
 (defn canonical-proto [request]
   (or (header request "X-Forwarded-Proto") "http"))
 
+(defn canonical-host [request]
+  (getenv "CANONICAL_HOST" "localhost"))
+
 (defn canonical-port [request]
   (let [default-port (if (= (canonical-proto request) "https") "443" "80")]
     (Integer/parseInt (getenv "CANONICAL_PORT" default-port))))
 
-(defn canonical-host [request]
-  (str (getenv "CANONICAL_HOST" "localhost") ":" (canonical-port request)))
+(defn- canonical-port-if-not-default [request]
+  (let [proto (canonical-proto request)
+        port (canonical-port request)
+        default-port {"http" 80 "https" 443}]
+    (if (= port (get default-port proto)) "" (str ":" port))))
 
 (defn canonical-redirect-url [request]
   (let [path (request/path-info request)
         proto (canonical-proto request)
-        host-port (canonical-host request)]
-    (str proto "://" host-port path)))
+        host (canonical-host request)
+        maybe-port (canonical-port-if-not-default request)]
+    (str proto "://" host maybe-port path)))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
