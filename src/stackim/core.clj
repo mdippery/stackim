@@ -34,7 +34,7 @@
   (let [proto (canonical-proto request)
         port (canonical-port request)
         default-port {"http" 80 "https" 443}]
-    (if (= port (get default-port proto)) "" (str ":" port))))
+    (when-not (= port (get default-port proto)) (str ":" port))))
 
 (defn canonical-redirect-url [request]
   (let [path (request/path-info request)
