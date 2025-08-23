@@ -5,7 +5,6 @@
             [compojure.route :as route]
             [org.httpkit.server :as http]
             [ring.middleware.params :as ring]
-            [ring.util.request :as request]
             [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.tags :as tags]))
@@ -14,34 +13,8 @@
 
 (defn getenv [k default] (or (get *env* k) default))
 
-(defn header [request name]
-  (get-in request [:headers (str/lower-case name)]))
-
 (defn port []
   (Integer/parseInt (getenv "PORT" "5000")))
-
-(defn canonical-proto [request]
-  (or (header request "X-Forwarded-Proto") "http"))
-
-(defn canonical-host [request]
-  (getenv "CANONICAL_HOST" "localhost"))
-
-(defn canonical-port [request]
-  (let [default-port (if (= (canonical-proto request) "https") "443" "80")]
-    (Integer/parseInt (getenv "CANONICAL_PORT" default-port))))
-
-(defn- canonical-port-if-not-default [request]
-  (let [proto (canonical-proto request)
-        port (canonical-port request)
-        default-port {"http" 80 "https" 443}]
-    (when-not (= port (get default-port proto)) (str ":" port))))
-
-(defn canonical-redirect-url [request]
-  (let [path (request/path-info request)
-        proto (canonical-proto request)
-        host (canonical-host request)
-        maybe-port (canonical-port-if-not-default request)]
-    (str proto "://" host maybe-port path)))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
