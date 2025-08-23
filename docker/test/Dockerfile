@@ -8,4 +8,5 @@ WORKDIR /build
 ENV LEIN_JVM_OPTS='-XX:UseSVE=0'
 ENV JAVA_OPTS=$LEIN_JVM_OPTS
 
-ENTRYPOINT ["lein", "test"]
+CMD ["test"]
+ENTRYPOINT ["lein"]

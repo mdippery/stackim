@@ -18,7 +18,11 @@ sh: build
 
 # Run the test suite
 test: build-test
-  docker run {{docker_image}}-test
+  docker run --rm {{docker_image}}-test
+
+# Open up a Clojure REPL
+repl: build-test
+  docker run --rm -it {{docker_image}}-test repl
 
 # Run the web application and supporting infrastructure
 run-compose:
