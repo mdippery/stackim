@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.java.jdbc :as jdbc]
             [ring.mock.request :as mock]
-            [stackim.core :as core]))
+            [stackim.core :as core]
+            [stackim.env :as env]))
 
 
 (defn- jdbc-query [opts query]
@@ -15,7 +16,7 @@
 (deftest port-configuration
   (testing "port configuration"
     (testing "with environment variable"
-      (binding [core/*env* {"PORT" "8080"}]
+      (binding [env/*env* {"PORT" "8080"}]
         (is (= (core/port) 8080))))
 
     (testing "without environment variable"

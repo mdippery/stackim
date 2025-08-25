@@ -7,14 +7,12 @@
             [ring.middleware.params :as ring]
             [selmer.parser :as selmer]
             [stackim.db :as db]
+            [stackim.env :as env]
+            [stackim.middleware :as middleware]
             [stackim.tags :as tags]))
 
-(def ^:dynamic *env* (System/getenv))
-
-(defn getenv [k default] (or (get *env* k) default))
-
 (defn port []
-  (Integer/parseInt (getenv "PORT" "5000")))
+  (Integer/parseInt (env/getenv "PORT" "5000")))
 
 (defn stack-url [id]
   (str "http://stackoverflow.com/users/" id))
@@ -68,7 +66,9 @@
   (route/resources "/"))
 
 (def app
-  (-> stackim ring/wrap-params))
+  (-> stackim
+      middleware/add-hsts
+      ring/wrap-params))
 
 (defn -main []
   (println "Starting server on port" (port))

@@ -1,7 +1,14 @@
 (ns stackim.middleware
   (:require [clojure.string :as str]
             [ring.util.request :as request]
-            [stackim.core :as core]))
+            [stackim.env :as env]))
+
+(def hsts-age
+  ; 365 days
+  (* 60 60 24 365))
+
+(def hsts-header-value
+  (str "max-age=" hsts-age "; includeSubDomains; preload"))
 
 (defn header [request name]
   (get-in request [:headers (str/lower-case name)]))
@@ -10,11 +17,11 @@
   (or (header request "X-Forwarded-Proto") "http"))
 
 (defn canonical-host [request]
-  (core/getenv "CANONICAL_HOST" "localhost"))
+  (env/getenv "CANONICAL_HOST" "localhost"))
 
 (defn canonical-port [request]
   (let [default-port (if (= (canonical-proto request) "https") "443" "80")]
-    (Integer/parseInt (core/getenv "CANONICAL_PORT" default-port))))
+    (Integer/parseInt (env/getenv "CANONICAL_PORT" default-port))))
 
 (defn- canonical-port-if-not-default [request]
   (let [proto (canonical-proto request)
@@ -28,3 +35,13 @@
         host (canonical-host request)
         maybe-port (canonical-port-if-not-default request)]
     (str proto "://" host maybe-port path)))
+
+(defn add-header [response header-name header-value]
+  (assoc-in response [:headers header-name] header-value))
+
+(defn add-hsts [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (if (= (canonical-proto request) "https")
+        (add-header response "Strict-Transport-Security" hsts-header-value)
+        response))))
