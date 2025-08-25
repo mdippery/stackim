@@ -67,6 +67,9 @@
   (PUT "/:tag" req (put-tag (:tag (:params req)) (get (:params req) "stackid")))
   (route/resources "/"))
 
+(def app
+  (-> stackim ring/wrap-params))
+
 (defn -main []
   (println "Starting server on port" (port))
-  (http/run-server (ring/wrap-params stackim) {:port (port)}))
+  (http/run-server app {:port (port)}))
