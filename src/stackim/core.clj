@@ -68,6 +68,7 @@
 (def app
   (-> stackim
       middleware/add-hsts
+      middleware/redirect-canonical-host
       ring/wrap-params))
 
 (defn -main []

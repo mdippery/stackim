@@ -1,6 +1,7 @@
 (ns stackim.middleware
   (:require [clojure.string :as str]
             [ring.util.request :as request]
+            [ring.util.response :as response]
             [stackim.env :as env]))
 
 (def hsts-age
@@ -45,3 +46,18 @@
       (if (= (canonical-proto request) "https")
         (add-header response "Strict-Transport-Security" hsts-header-value)
         response))))
+
+(defn extract-host [request]
+  (let [header-host (header request "Host")]
+    (when (some? header-host)
+      (let [split-host (str/split header-host #":")]
+        (get split-host 0)))))
+
+(defn redirect-canonical-host [handler]
+  (fn [request]
+    (let [header-host (extract-host request)
+          expected-host (canonical-host request)
+          redirect-url (canonical-redirect-url request)]
+      (if (not= header-host expected-host)
+        (response/redirect redirect-url 301)
+        (handler request)))))

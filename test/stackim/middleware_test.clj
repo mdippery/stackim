@@ -157,3 +157,78 @@
               headers (:headers response)]
           (testing "Strict-Transport-Security header is added"
             (is (contains? headers "Strict-Transport-Security"))))))))
+
+(deftest extract-host
+  (testing "extract host from request"
+    (testing "when there is no host header"
+      (let [request {:uri "/" :headers {"Content-Type" "text/html"}}]
+        (is (nil? (middleware/extract-host request)))))
+
+    (testing "when the host header is empty"
+      (let [request (-> (mock/request :get "/")
+                        (mock/header "Host" "")
+                        (mock/header "Content-Type" "text/html"))]
+        (is (= (middleware/extract-host request) ""))))
+
+    (testing "when the host does not have a port"
+      (let [request (-> (mock/request :get "/")
+                        (mock/header "Host" "stack.im")
+                        (mock/header "Content-Type" "text/html"))]
+        (is (= (middleware/extract-host request) "stack.im"))))
+
+    (testing "when the host has a port"
+      (let [request (-> (mock/request :get "/")
+                        (mock/header "Host" "stack.im:8080")
+                        (mock/header "Content-Type" "text/html"))]
+        (is (= (middleware/extract-host request) "stack.im"))))))
+
+(deftest redirect-canonical-host
+  (testing "canonical host middleware"
+    (let [mock-handler (fn [request] {:status 200 :body "OK"})
+          wrapped (middleware/redirect-canonical-host mock-handler)]
+
+      (testing "when the request has no host header"
+        (let [request {:uri "/" :headers {"Content-Type" "text/html"}}
+              response (wrapped request)]
+          (is (= (:status response) 301))
+          (is (= (get-in response [:headers "Location"]) "http://localhost/"))))
+
+      (testing "when the host header in the request is empty"
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Host" "")
+                          (mock/header "Content-Type" "text/html"))
+              response (wrapped request)]
+          (is (= (:status response) 301))
+          (is (= (get-in response [:headers "Location"]) "http://localhost/"))))
+
+      (testing "when the host header specifies a port"
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Host" "stack.im:8080")
+                          (mock/header "Content-Type" "text/html"))]
+
+          (testing "and the host is the canonical host"
+            (binding [env/*env* {"CANONICAL_HOST" "stack.im"}]
+              (let [response (wrapped request)]
+                (is (= (:status response) 200)))))
+
+          (testing "and the host is not the canonical host"
+            (binding [env/*env* {"CANONICAL_HOST" "example.com"}]
+              (let [response (wrapped request)]
+                (is (= (:status response) 301))
+                (is (= (get-in response [:headers "Location"]) "http://example.com/")))))))
+
+      (testing "when the host header does not have a port specified"
+        (let [request (-> (mock/request :get "/")
+                          (mock/header "Host" "stack.im")
+                          (mock/header "Content-Type" "text/html"))]
+
+          (testing "and the host is the canonical host"
+            (binding [env/*env* {"CANONICAL_HOST" "stack.im"}]
+              (let [response (wrapped request)]
+                (is (= (:status response) 200)))))
+
+          (testing "and the host is not the canonical host"
+            (binding [env/*env* {"CANONICAL_HOST" "example.com"}]
+              (let [response (wrapped request)]
+                (is (= (:status response) 301))
+                (is (= (get-in response [:headers "Location"]) "http://example.com/"))))))))))
