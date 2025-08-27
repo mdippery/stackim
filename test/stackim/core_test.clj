@@ -5,7 +5,6 @@
             [stackim.core :as core]
             [stackim.env :as env]))
 
-
 (defn- jdbc-query [opts query]
   (if (= (last query) "mpd") [{:name "mpd" :stack_id 28804}] {}))
 

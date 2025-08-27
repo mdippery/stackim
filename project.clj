@@ -17,4 +17,5 @@
   :uberjar-name "stackim-standalone.jar"
   :manifest {"Implementation-Version" ~project-version}
   :profiles {:dev {:dependencies [[ring/ring-mock "0.4.0"]]}
-             :uberjar {:aot :all}})
+             :uberjar {:aot :all}}
+  :plugins [[dev.weavejester/lein-cljfmt "0.13.1"]])

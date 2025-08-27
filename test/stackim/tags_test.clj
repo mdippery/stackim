@@ -3,7 +3,6 @@
             [clojure.java.jdbc :as jdbc]
             [stackim.tags :as tags]))
 
-
 (defn- jdbc-query [opts query]
   (if (= (last query) "mpd") [{:name "mpd" :stack_id 28804}] {}))
 

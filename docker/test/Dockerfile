@@ -2,7 +2,7 @@ FROM alpine:3.22
 
 RUN apk add leiningen
 
-COPY . /build
+#COPY . /build
 WORKDIR /build
 
 ENV LEIN_JVM_OPTS='-XX:UseSVE=0'

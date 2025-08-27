@@ -3,7 +3,6 @@
             [clojure.string :as str]
             [stackim.db :as db]))
 
-
 (defn insert [tag id]
   (jdbc/insert! db/db :tags {:name (str/lower-case tag) :stack_id id}))
 
