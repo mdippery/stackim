@@ -9,7 +9,6 @@
                  [compojure "1.6.2"]
                  [http-kit "2.5.3"]
                  [org.postgresql/postgresql "42.3.1"]
-                 [org.xerial/sqlite-jdbc "3.36.0.3"]
                  [selmer "1.12.45"]]
   :main ^:skip-aot stackim.core
   :target-path "target/%s"
