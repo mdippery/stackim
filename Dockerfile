@@ -22,11 +22,10 @@ COPY --from=builder /build/target/uberjar/stackim-standalone.jar .
 
 ENV PORT=8080 \
     CANONICAL_HOST=localhost \
-    DATABASE_URL="postgres://stackim:stackim@localhost/stackim" \
-    JAVA_OPTS='-XX:UseSVE=0'
+    DATABASE_URL="postgres://stackim:stackim@localhost/stackim"
 ENV CANONICAL_PORT=${PORT}
 
 EXPOSE ${PORT}
 
 ENTRYPOINT ["java"]
-CMD ["-jar", "stackim-standalone.jar"]
+CMD ["-XX:UseSVE=0", "-jar", "stackim-standalone.jar"]
