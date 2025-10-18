@@ -28,4 +28,4 @@ ENV CANONICAL_PORT=${PORT}
 EXPOSE ${PORT}
 
 ENTRYPOINT ["java"]
-CMD ["-XX:UseSVE=0", "-jar", "stackim-standalone.jar"]
+CMD ["-jar", "stackim-standalone.jar"]
