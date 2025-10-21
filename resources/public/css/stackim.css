@@ -1,5 +1,9 @@
 @import url('/css/reset.css');
 
+html {
+  font-size: 1.15vw;
+}
+
 body {
   font-family: Georgia, serif;
   margin: 0 auto;
@@ -16,17 +20,16 @@ a {
 }
 
 #header h1 {
-  font-size: 64px;
+  font-size: 3.66rem;
 }
 
 #header h2 {
-  font-size: 18px;
+  font-size: 1.1rem;
   text-transform: lowercase;
 }
 
 #content {
   color: rgb(68,68,68);
-  font-size: 17px;
   margin-bottom: 2em;
 }
 
@@ -49,7 +52,7 @@ a {
 }
 
 #content h3 {
-  font-size: 30px;
+  font-size: 2rem;
   margin-top: 1em;
 }
 
@@ -57,7 +60,6 @@ a {
 #content .url-example {
   background-color: #eee;
   font-family: 'Consolas', 'Menlo', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
-  font-size: 15px;
   margin-top: 1em;
   padding: 7px 30px;
 }
