@@ -1,7 +1,7 @@
 set dotenv-load := true
 
 docker_image := 'stack.im'
-docker_opts  := '--rm -e DATABASE_URL -p 0.0.0.0:8080:8080'
+docker_opts  := '--rm -e DATABASE_URL -p 8080:8080'
 
 docker_test_image := docker_image + '-test'
 docker_test_opts  := '--rm -v $(pwd):/build'
