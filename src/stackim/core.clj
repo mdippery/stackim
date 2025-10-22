@@ -72,4 +72,4 @@
 
 (defn -main []
   (println "Starting server on port" (port))
-  (http/run-server app {:port (port)}))
+  (http/run-server app {:ip "0.0.0.0" :port (port)}))
