@@ -21,9 +21,7 @@ WORKDIR /app
 COPY --from=builder /build/target/uberjar/stackim-standalone.jar .
 
 ENV PORT=8080 \
-    CANONICAL_HOST=localhost \
     DATABASE_URL="postgres://stackim:stackim@localhost/stackim"
-ENV CANONICAL_PORT=${PORT}
 
 EXPOSE ${PORT}
 

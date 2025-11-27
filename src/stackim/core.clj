@@ -8,7 +8,6 @@
             [selmer.parser :as selmer]
             [stackim.db :as db]
             [stackim.env :as env]
-            [stackim.middleware :as middleware]
             [stackim.tags :as tags]))
 
 (defn port []
@@ -65,10 +64,7 @@
   (route/resources "/"))
 
 (def app
-  (-> stackim
-      middleware/add-hsts
-      middleware/redirect-canonical-host
-      ring/wrap-params))
+  (-> stackim ring/wrap-params))
 
 (defn -main []
   (println "Starting server on port" (port))
